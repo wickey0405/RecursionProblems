@@ -1,3 +1,5 @@
+package problem_238;
+
 class Solution{
     public static int decodeIntegerHelper(String prev, String str, int total){
         if (Integer.parseInt(prev)==0) return total-1;// prevが0の時は文字列として成立しないのでケースから1つ減らす。
@@ -19,5 +21,10 @@ class Solution{
         //ここから書きましょう
         String str = String.valueOf(n);    
         return decodeIntegerHelper(str.substring(0,1),str.substring(1),1);
+    }
+}
+class Main{
+    public static void main(String[] args){
+        System.out.println(Solution.decodeInteger(1553));
     }
 }
