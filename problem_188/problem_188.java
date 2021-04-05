@@ -56,7 +56,7 @@ class Main{
         Consumer<SinglyLinkedListNodeInt> printList = (node)->{
             String str = "";
             while(node.next != null){
-                str += node.data + "->";
+                str += node.data + "➡";
                 node = node.next;
             }
             str += node.data;
