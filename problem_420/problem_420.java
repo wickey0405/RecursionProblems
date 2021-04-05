@@ -1,5 +1,8 @@
 package problem_420;
 
+import java.util.Arrays;
+import java.util.stream.*;
+
 class Node{
     public int data;
     public Node next;
@@ -32,36 +35,46 @@ class Stack{
 
         Node temp = this.head;
         this.head = this.head.next;
-        if (this.head != null) this.head.next = null;
         return temp.data;
     }
 }
 
 class Solution{
+    public static int[] reverse(int[] arr){
+        int[] reverse = arr.clone();
+        for (int i = 0; i < reverse.length/2; i++){
+            int temp = reverse[i];
+            reverse[i] = reverse[reverse.length - 1 - i];
+            reverse[reverse.length-1-i] = temp;
+        }
+        return reverse;
+    }
+    public static int[] calcConstructBottom(int[] arr){
+        Stack stack = new Stack();
+        int[] bottom = new int[arr.length];
+
+        for (int i = 0; i < arr.length; i++){
+            int count = 1;
+            while(stack.peek()!=null && arr[stack.peek()] >= arr[i]){
+                count += bottom[stack.peek()];
+                stack.pop();
+            }
+            bottom[i] = count;
+            stack.push(i);
+        }
+        return bottom;
+    }
     public static int largestRectangle(int[] h){
         //ここから書きましょう
-        Stack stack = new Stack();
-        int maxArea = Integer.MIN_VALUE;
-        for(int i = 0; i < h.length; i++){
-            int bottom = 1;
-            int j = i+1;
-            Node iterator = stack.head;
-            while(iterator != null && iterator.data >= h[i]){
-                bottom++;
-                iterator = iterator.next;
-            }
-            while(j < h.length && h[j] >= h[i]){
-                bottom++;
-                j++;
-            }
-            if (maxArea < h[i]*bottom) maxArea = h[i]*bottom;
-            System.out.println("bottom: " + bottom + ", h[i]: " + h[i]);
-            stack.push(h[i]);
-        }
-        
-        return maxArea;
+        int[] right = calcConstructBottom(h);
+        int[] left = reverse(calcConstructBottom(reverse(h)));
+        System.out.println(Arrays.toString(right));
+        System.out.println(Arrays.toString(left));
+
+        return IntStream.range(0,h.length).map(x->(right[x]+left[x]-1)*h[x]).max().getAsInt();
     }
 }
+
 class Main{
     public static void main(String[] args){
         System.out.println((Solution.largestRectangle(new int[]{2,3,1,1,12,3,10})));
