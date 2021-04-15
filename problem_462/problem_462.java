@@ -1,8 +1,8 @@
 package problem_462;
 
 import java.util.ArrayList;
-import java.util.ArrayDeque;
-import java.util.Deque;
+
+import java.util.ArrayList;
 
 class BinaryTree {
     public int data;
@@ -19,59 +19,35 @@ class BinaryTree {
 }
 
 class Solution{
-    public static BinaryTree walkDeque(BinaryTree bt, Deque<Integer> deque){
-        if (deque.peekFirst() == null) return null;
-        while(deque.peekFirst()!=null){
-            if (deque.peekFirst()==-1) bt = bt.left;
-            else bt = bt.right;
-            deque.pollFirst();
-        }
-        return bt;
+    public static BinaryTree minimumNode(BinaryTree bt){
+        if (bt.left == null) return bt;
+        return minimumNode(bt.left);
     }
-    public static BinaryTree routeFromRootToKey(BinaryTree root, BinaryTree bt, BinaryTree parent, int key, Deque<Integer> deque){
-        
+    public static BinaryTree findNode(BinaryTree bt,int key){
         if (bt == null) return null;
-        if (bt.data == key ){
-            if (bt == root){
-                if (bt.right == null) return null;
-                else {
-                    bt = bt.right;
-                    while (bt.left != null) bt = bt.left;
-                    return bt;
-                }
-            } 
+        if (bt.data == key) return bt;
 
-            if (bt.right != null){
-                bt = bt.right;
-                while(bt.left != null){
-                    bt = bt.left;
-                }
-                return bt;
-            } 
-            else if (parent.right == bt){
-                System.out.println("First Deque Size: " + deque.size());
-                while(deque.peekLast() != null && deque.peekLast() == 1) deque.pollLast();
-                deque.pollLast();
-                System.out.println("this route!" + " Deque Size: " + deque.size());
-                return walkDeque(root, deque);
-            } else {
-                
-                return parent;
-            }
-        }        
-
-        if (bt.data > key){
-            deque.addLast(-1);
-            return routeFromRootToKey(root ,bt.left, bt, key, deque);
-        } else {
-            deque.addLast(1);
-            return routeFromRootToKey(root, bt.right, bt, key, deque);
-        }
+        if (bt.data > key) return findNode(bt.left, key);
+        else return findNode(bt.right, key);
     }
     public static BinaryTree successor(BinaryTree root,int key){
         //ここから書きましょう
-        Deque<Integer> deque = new ArrayDeque<>();
-        return routeFromRootToKey(root, root, null, key, deque);
+        BinaryTree target = findNode(root, key);
+
+        if (target == null) return null;
+        if (target.right != null) return minimumNode(target.right);
+
+        BinaryTree successor = null;
+        BinaryTree iterator = root;
+        while(iterator != null){
+            if (target.data == iterator.data) return successor;
+            if (target.data < iterator.data && (successor == null || successor.data > iterator.data)) successor = iterator;
+
+            if (target.data < iterator.data) iterator = iterator.left;
+            else iterator = iterator.right;
+        }
+        return successor;
     }
 }
+
 // VScodeではエラーになります。
